@@ -41,4 +41,4 @@ class Vector3:
     def vectorialProduct(u, v):
         return Vector3(u.getJ()*v.getK() - u.getK()*v.getJ(), u.getK()*v.getI() - u.getI()*v.getK(), u.getI()*v.getJ() - u.getJ()*v.getI())
 
-    
+
