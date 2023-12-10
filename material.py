@@ -1,9 +1,11 @@
+from vector3 import Vector3
+
 class Material:
-    def __init__(self, ambienceReflexetion, diffuseReflexetion, specularReflexetion, specularM, normal):
+    def __init__(self, ambienceReflexetion, diffuseReflexetion, specularReflexetion, specularM):
         self.ambienceReflexetion = ambienceReflexetion
         self.diffuseReflexetion = diffuseReflexetion
         self.specularReflexetion = specularReflexetion
-        self.normal = normal
+        self.normal = Vector3(0,0,0)
         self.specularM = specularM
 
     def getAmbienceReflexetion(self):
@@ -14,6 +16,9 @@ class Material:
     
     def getSpecularReflexetion(self):
         return self.specularReflexetion
+    
+    def setNormal(self, normal):
+        self.normal = normal
     
     def getNormal(self):
         return self.normal
