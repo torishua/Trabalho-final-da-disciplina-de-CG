@@ -24,6 +24,9 @@ class Point:
     def subtract(p1, p2):
         return Point(p1.getI()-p2.getI(), p1.getJ()-p2.getJ(), p1.getK()-p2.getK())
     
+    def multiplyByScalar(scalar, self):
+        return Point(scalar*self.i, scalar*self.j, scalar*self.k)
+    
     def getVector3(self):
         return Vector3(self.getI(), self.getJ(), self.getK())
     

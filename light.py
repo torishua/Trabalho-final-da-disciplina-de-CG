@@ -75,7 +75,7 @@ class Light:
             lgtS = Light.specularLight(m, p, v, lgtSource)
             lgt = Light.sum(lgt, lgtD)
             lgt = Light.sum(lgt, lgtS)
-
+        ambienceLgt = Light.ambienceLight(m, ambienceLgt)
         lgt = Light.sum(lgt, ambienceLgt)
         lgt = Light(min(255, lgt.getRed()), min(255, lgt.getBlue()), min(255, lgt.getGreen()))
         return lgt

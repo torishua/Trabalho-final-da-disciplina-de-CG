@@ -6,12 +6,13 @@ from light import Light
 from typing import Callable
 
 class Object:
-    def __init__(self, materials: list[Material], mapFunction: Callable[[list[Material], Point], Material], world, position = Point(0,0,0), upDirection = Vector3(0,1,0)) -> None:
+    def __init__(self, materials: list[Material], mapFunction: Callable[[list[Material], Point], Material], world, position = Point(0,0,0), upDirection = Vector3(0,1,0), name = 'null object') -> None:
         self.materiais = materials
         self.mapFunction = mapFunction
         self.world = world
         self.position = position
         self.upDirection = upDirection
+        self.name = name
 
     def getPosition(self):
         return self.position
@@ -21,6 +22,12 @@ class Object:
 
     def getUpDirection(self):
         return self.upDirection
+    
+    def setMaterialList(self, materials):
+        self.materiais = materials
+
+    def getMaterialList(self):
+        return self.materiais
     
     def setUpDirection(self, upDirection):
         self.upDirection = upDirection
@@ -44,6 +51,8 @@ class Object:
         lgt = Light.calculeTotalLight(material, point, v, lightSources, ambienceLight)
         return lgt
         
+    def __str__(self) -> str:
+        return self.name
         
     
 
