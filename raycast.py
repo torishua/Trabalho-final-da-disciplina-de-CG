@@ -1,0 +1,2 @@
+class Raycast:
+    pass

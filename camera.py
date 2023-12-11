@@ -1,7 +1,11 @@
 from vector3 import Vector3
+from pixel import Pixel
+from point import Point
+from object import Object
+from light import Light
 
 class Camera:
-    def __init__(self, eyePoint, atPoint, upPoint, focalDistance, xmin, xmax, ymin, ymax, step):
+    def __init__(self, eyePoint, atPoint, upPoint, focalDistance, xmin, xmax, ymin, ymax):
         self.eyePoint = eyePoint
         self.atPoint = atPoint
         self.upPoint = upPoint
@@ -10,7 +14,6 @@ class Camera:
         self.xmax = xmax
         self.ymin = ymin
         self.ymax = ymax
-        self.step = step
 
     def getEyePoint(self):
         return self.eyePoint
@@ -35,5 +38,37 @@ class Camera:
 
     def setFocalDistance(self, focalDistance):
         self.focalDistance = focalDistance
+
+    def castRay(self, pixel:Pixel, width, height, world):
+        objects: list[Object] = world.getObjects()
+        if(len(objects) == 0):
+            return
+        
+        (x,y) = pixel.getPosition()
+        stepY = (self.ymax - self.ymin)/height
+        stepX = (self.xmax - self.xmin)/width
+        p0 = Point(0,0,0)
+        v = Vector3(self.xmin+stepX*(x+1/2), self.ymax - stepY*(y+1/2), self.focalDistance).normalize()
+        minTi = None
+        i = 0
+        for j in range(len(objects)):
+            tj = objects[j].getIntersection(v, p0)
+            if minTi == None:
+                minTi = tj
+                i=j
+            elif tj != None and tj < minTi:
+                minTi = tj
+                i=j
+
+        if minTi == None:
+            return
+        
+        pixel.setObject(objects[i])
+        pixel.setLight(objects[i].getIntersectionLight(v, minTi, p0))
+        
+        
+
+
+        
 
     

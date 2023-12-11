@@ -1,5 +1,4 @@
 import math
-from camera import Camera
 from vector3 import Vector3
 from point import Point
 
@@ -53,13 +52,13 @@ class Matrix4D:
     def rotationZ(angle):
         return Matrix4D([[math.cos(angle), -math.sin(angle),0,0],[math.sin(angle),math.cos(angle),0,0],[0,0,1,0],[0,0,0,1]])
 
-    def world2Camera(c: Camera):
+    def world2Camera(c):
         kc = Point.toVector(c.getAtPoint(), c.getEyePoint()).normalize()
         ic = Vector3.vectorialProduct(c.getUpPoint(), Vector3(0,0,1)).normalize()
-        jc = Vector3.vectorialProduct(kc, ic)
-        row1 = [ic.getI(), ic.getJ(), ic.getK(), -Vector3.scalarProduct(ic,c.getEyePoint())]
-        row2 = [jc.getI(), jc.getJ(), jc.getK(), -Vector3.scalarProduct(jc,c.getEyePoint())]
-        row3 = [kc.getI(), kc.getJ(), kc.getK(), -Vector3.scalarProduct(kc,c.getEyePoint())]
+        jc = Vector3.vectorialProduct(kc, ic).normalize()
+        row1 = [ic.getI(), ic.getJ(), ic.getK(), -Vector3.scalarProduct(ic,c.getEyePoint().getVector3())]
+        row2 = [jc.getI(), jc.getJ(), jc.getK(), -Vector3.scalarProduct(jc,c.getEyePoint().getVector3())]
+        row3 = [kc.getI(), kc.getJ(), kc.getK(), -Vector3.scalarProduct(kc,c.getEyePoint().getVector3())]
         row4 = [0,0,0,1]
         return Matrix4D([row1, row2, row3, row4])
         

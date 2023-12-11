@@ -15,8 +15,14 @@ class Point:
     def getK(self):
         return self.k
     
-    def getW(self):
+    def getScalar(self):
         return 1
+    
+    def add(p1, p2):
+        return Point(p1.getI()+p2.getI(), p1.getJ()+p2.getJ(), p1.getK()+p2.getK())
+    
+    def subtract(p1, p2):
+        return Point(p1.getI()-p2.getI(), p1.getJ()-p2.getJ(), p1.getK()-p2.getK())
     
     def getVector3(self):
         return Vector3(self.getI(), self.getJ(), self.getK())
