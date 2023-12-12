@@ -61,6 +61,14 @@ class Matrix4D:
         row3 = [kc.getI(), kc.getJ(), kc.getK(), -Vector3.scalarProduct(kc,c.getEyePoint().getVector3())]
         row4 = [0,0,0,1]
         return Matrix4D([row1, row2, row3, row4])
+    
+    def pontualShadowProjectionY(point):
+        return Matrix4D([[point.getJ(), -point.getI(), 0, 0], [0,0,0,0], [0, -point.getK(), point.getJ(),0], [0,-1,0,point.getJ()]])
+    
+    def directionalShadowProjectionY(vector3):
+        return Matrix4D([[1, -vector3.getI()/vector3.getJ(), 0,0 ], [0,0,0,0], [0,-vector3.getK()/vector3.getJ(),1,0],[0,0,0,1]])
+    
+
         
 
     

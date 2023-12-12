@@ -6,9 +6,6 @@ from transform import Transform
 import math
 
 class Light:
-    __a = 1
-    __b = 1
-    __c = 2
 
     def __init__(self, red, green, blue):
         self.red = red
@@ -43,10 +40,9 @@ class Light:
         q = lgtSource.getPosition()
         pq = Point.toVector(q, p)
         l = pq.normalize()
-        d = pq.magnitude()
         n = m.getNormal()
         k = m.getDiffuseReflexetion()
-        D = Light.__a + Light.__b*d + Light.__c*d**2
+        D = lgtSource.getDistanceFrom(p)
         Id = Light.multiplyByScalar(max(0,Vector3.scalarProduct(l, n)), lgtSource.getIntensity()) #(l.n)Ld
         Id = Light.multiplyByScalar(1/D, Id) #1/D*(l.n)Ld
         Id = Light.arrobaOperation(k, Id)
@@ -57,15 +53,13 @@ class Light:
         pq = Point.toVector(q, p)
         l = pq.normalize()
         n = m.getNormal()
+        D = lgtSource.getDistanceFrom(p)
         planeVector = Vector3.vectorialProduct(l, n)
         angle = math.acos(Vector3.scalarProduct(l, n))
         r = Transform.rotation(2*angle, planeVector, l)
-        d = pq.magnitude()
-        D = Light.__a + Light.__b*d + Light.__c*d**2
-        Id = Light.multiplyByScalar(max(0,Vector3.scalarProduct(l, n)), lgtSource.getIntensity())
-        Is = Light.arrobaOperation(m.getSpecularReflexetion(), lgtSource.getIntensity())
-        specCons = Vector3.scalarProduct(r, v)**m.getSpecularM()
-        Is = Light.multiplyByScalar(1/D*specCons, Is)
+        Is = Light.arrobaOperation(m.getSpecularReflexetion(), lgtSource.getIntensity()) #kL
+        specCons = Vector3.scalarProduct(r, v)**m.getSpecularM() #(r.v)**m
+        Is = Light.multiplyByScalar(1/D*specCons, Is) #(kL/D)(r.v)**m
         return Is
     
     def calculeTotalLight(m, p, v, sources, ambienceLgt):

@@ -40,16 +40,33 @@ class Object:
         raise Exception("Method not implemented")
     
     def getNormal(self, point):
-        raise Exception("Methode not implemented")
+        raise Exception("Method not implemented")
     
     def getIntersectionLight(self, v, ti, p0 = Point(0,0,0)):
         point = Point.add(p0, Vector3.multiplyByScalar(ti, v))
         material = self.mapFunction(self.materiais, Point.subtract(point, self.position))
         material.setNormal(self.getNormal(point))
         lightSources = self.world.getLightSources()
+        objects = self.world.getObjects()
+        usableSources = []
+        for source in lightSources:
+            shadowed = False
+            ushadow = source.getVector3At(point).normalize()
+            for object in objects:
+                if object != self:
+                    ti = object.getIntersection(ushadow, point)
+                    if ti != None:
+                        shadowed = True
+                        break
+            if not shadowed:
+                usableSources.append(source)
+
+
         ambienceLight = self.world.getAmbienceLight()
-        lgt = Light.calculeTotalLight(material, point, v, lightSources, ambienceLight)
+        lgt = Light.calculeTotalLight(material, point, v, usableSources, ambienceLight)
         return lgt
+    
+
         
     def __str__(self) -> str:
         return self.name

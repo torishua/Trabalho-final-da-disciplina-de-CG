@@ -3,6 +3,8 @@ from material import Material
 from object import Object
 from point import Point
 from vector3 import Vector3
+from transform import Transform
+import math
 
 class Mesh(Object):
     def __init__(self, materials: list[Material], mapFunction: Callable[[list[Material], Point], Material], world, p1, p2, p3, normalMapping = None, name = 'mesh') -> None:
@@ -16,6 +18,21 @@ class Mesh(Object):
         v2 = Point.toVector(p1, p3)
         upDirection = Vector3.vectorialProduct(v1, v2)
         super().__init__(materials, mapFunction, world, position, upDirection, name)
+
+    def setPosition(self, position):
+        self.p1 = Point.add(Point.subtract(self.p1, self.position), position)
+        self.p2 = Point.add(Point.subtract(self.p2, self.position), position)
+        self.p3 = Point.add(Point.subtract(self.p3, self.position), position)
+        self.position = position
+
+    def setUpDirection(self, upDirection):
+        angle = math.acos(Vector3.scalarProduct(self.upDirection.normalize(), upDirection.normalize()))
+        u = Vector3.vectorialProduct(self.upDirection, upDirection).normalize()
+        self.p1 = Transform.rotation(angle, u, self.p1)
+        self.p2 = Transform.rotation(angle, u, self.p2)
+        self.p3 = Transform.rotation(angle, u, self.p3)
+        self.upDirection = upDirection
+
 
     def getNormal(self, point):
         if self.normalMapping == None:
