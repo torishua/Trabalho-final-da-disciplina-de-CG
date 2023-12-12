@@ -22,9 +22,12 @@ class Sphere(Object):
             return None
         
         ti = (-b+math.sqrt(delta))/a
+        tj = (-b-math.sqrt(delta))/a
 
-        if ti <= 0:
+        if ti <= 0 and tj <=0:
             return None
-        
-        return ti
+        if ti < tj:
+            return ti
+        else:
+            return tj
     

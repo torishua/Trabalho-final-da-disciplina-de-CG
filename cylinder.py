@@ -3,38 +3,54 @@ from material import Material
 from point import Point
 from vector3 import Vector3
 import math
+from transform import Transform
 
 class Cylinder(Object):
-    def __init__(self, materials, mapFunction, world, radius, height, position=Point(0, 0, 0), upDirection=Vector3(0, 1, 0)):
+    def __init__(self, materials, mapFunction, world, radius, height, baseCenter, upDirection=Vector3(0, 1, 0)):
+        position = Point.multiplyByScalar(1/2, Point.add(baseCenter), Vector3.multiplyByScalar(height,upDirection.normalize()))
+        self.baseCenter = baseCenter
         super().__init__(materials, mapFunction, world, position, upDirection)
         self.radius = radius
         self.height = height
+        self.partSeen= None
 
     def getNormal(self, point):
-        n = Vector3(point.getI() - self.position.getI(), 0, point.getK() - self.position.getK()).normalize()
-        return n
+        if self.partSeen == None:
+            return Vector3(0,0,0)
+        elif self.partSeen == 'up':
+            return self.upDirection.normalize()
+        elif self.partSeen == 'down':
+            return Vector3.multiplyByScalar(-1, self.upDirection).normalize()
+        else:
+            v1 = Point.toVector(0, point)
+            v2 = Point.toVector(self.position, 0)
+            v = Vector3.add(v1, v2)
+            u = Vector3.vectorialProduct(v, self.upDirection)
+            n = Transform.rotation(math.pi/2, self.upDirection, u).normalize()
+            return n
 
     def getIntersection(self, v, p0=Point(0, 0, 0)):
-        # abordagem simples de verificação de interseção com os discos empilhados ao longo do eixo y
-        a = v.getI() ** 2 + v.getK() ** 2
-        b = 2 * (v.getI() * (p0.getI() - self.position.getI()) + v.getK() * (p0.getK() - self.position.getK()))
-        c = (p0.getI() - self.position.getI()) ** 2 + (p0.getK() - self.position.getK()) ** 2 - self.radius ** 2
+        d1 = Point.toVector(self.baseCenter, p0)
+        d2 = Vector3.multiplyByScalar(Vector3.scalarProduct(d1, self.upDirection), self.upDirection)
+        d = Vector3.subtract(d1, d2)
+        w = Vector3.subtract(v, Vector3.multiplyByScalar(Vector3.scalarProduct(v,self.upDirection), self.upDirection))
 
-        delta = b**2 - 4 * a * c
+        a = Vector3.scalarProduct(w,w)
+        b = Vector3.scalarProduct(d,w)
+        c = Vector3.scalarProduct(d,d) - self.radius**2
 
-        if delta < 0:
+        delta = b*b - a*c
+        if delta < 0 or a==0:
             return None
+        
+        ti = (-b+math.sqrt(delta))/a
+        tj = (-b-math.sqrt(delta))/a
 
-
-        t1 = (-b + math.sqrt(delta)) / (2 * a)
-        t2 = (-b - math.sqrt(delta)) / (2 * a)
-
-        intersection1 = Point(p0.getI() + t1 * v.getI(), p0.getJ() + t1 * v.getJ(), p0.getK() + t1 * v.getK())
-        intersection2 = Point(p0.getI() + t2 * v.getI(), p0.getJ() + t2 * v.getJ(), p0.getK() + t2 * v.getK())
-
-        if self.position.getJ() <= intersection1.getJ() <= self.position.getJ() + self.height:
-            return t1
-        elif self.position.getJ() <= intersection2.getJ() <= self.position.getJ() + self.height:
-            return t2
+        if ti <= 0 and tj <=0:
+            return None
+        if ti < tj:
+            self.partSeen = 'cilinder'
+            return ti
         else:
-            return None
+            self.partSeen = 'cilinder'
+            return tj
