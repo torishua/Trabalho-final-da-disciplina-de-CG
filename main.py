@@ -13,6 +13,7 @@ from world import World
 from object import Object
 from sphere import Sphere
 from reflexetion import Reflexetion
+from picking import Picking
 
 from sys import exit
 
@@ -23,29 +24,28 @@ pygame.init()
 screen = pygame.display.set_mode((Width, Heigth))
 pygame.display.set_caption("Computacao Grafica")
 
-matrixOfPixels = [[Pixel(None, Light(0,0,50), (i,j)) for i in range(Width)] for j in range(Heigth)]
+matrixOfPixels = [[Pixel(None, Light(0,20,100), (i,j)) for i in range(Width)] for j in range(Heigth)]
 
-world = World(Light(255,0,255))
+world = World(Light(255,255,255))
 
-material1 = Material(Reflexetion(0.7, 0.7, 0),Reflexetion(0.7, 0.4, 0.3), Reflexetion(0.7, 0.4, 0.6), 2)
-sphere = Sphere([material1], lambda materials, point:  materials[0],  world, 10)
-#print(sphere.getPosition().getI())
-world.addObject(sphere)
+material1 = Material(Reflexetion(1, 0, 0),Reflexetion(0.7, 0.4, 0), Reflexetion(0.7, 0.4, 0), 2)
+material2 = Material(Reflexetion(0, 1, 0),Reflexetion(0.7, 0.4, 0), Reflexetion(0.7, 0.4, 0), 2)
+material3 = Material(Reflexetion(1, 0, 1),Reflexetion(0.7, 0.4, 0), Reflexetion(0.7, 0.4, 0), 2)
+sphere1 = Sphere([material1], lambda materials, point:  materials[0],  world, 10, Point(20,0,20))
+sphere2 = Sphere([material2], lambda materials, point:  materials[0],  world, 10, Point(20,40,20))
+sphere3 = Sphere([material3], lambda materials, point:  materials[0],  world, 10, Point(20,80,20))
 
-sphere.setPosition(Transform.translate(10, 80, 10, sphere.getPosition()).toPoint())
-#print(sphere.getPosition().getJ())
-camera = Camera(Point(0,0,-10), Point(10,0,10), Point(10,40, 10), 10, -40, 40, -40, 40)
+world.addObject(sphere1)
+world.addObject(sphere2)
+world.addObject(sphere3)
+
+camera = Camera(Point(0,10,0), Point(10,0,10), Point(10, 40, 10), 10, -80, 80, -80, 80)
 world.world2Camera(camera)
 
-#print(sphere.getPosition().getI())
-#print(sphere.getPosition().getJ())
-#print(sphere.getPosition().getK())
+picking = Picking(camera, matrixOfPixels)
 
 for pixelRow in matrixOfPixels:
     for pixel in pixelRow:
-        #(x,y) = pixel.getPosition()
-        #color = pixel.getLight().toColor()
-        #pixel.setLight(Light((color[0]-10)%256, 0, (color[2]+10)%256))
         camera.castRay(pixel, Width, Heigth, world)
         screen.set_at(pixel.getPosition(), pixel.getLight().toColor())
 
@@ -57,5 +57,10 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            obj = picking.pickObjectByPixel(pos[0], pos[1])
+            print(obj)
 
     pygame.display.update()

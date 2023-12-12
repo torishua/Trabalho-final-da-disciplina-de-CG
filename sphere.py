@@ -5,8 +5,8 @@ from vector3 import Vector3
 import math
 
 class Sphere(Object):
-    def __init__(self, materials: list[Material], mapFunction, world, radius, position=Point(0,0,0), upDirection=Vector3(0,1,0)) -> None:
-        super().__init__(materials, mapFunction, world, position, upDirection)
+    def __init__(self, materials: list[Material], mapFunction, world, radius, position=Point(0,0,0), upDirection=Vector3(0,1,0), name = 'sphere') -> None:
+        super().__init__(materials, mapFunction, world, position, upDirection, name)
         self.radius = radius
 
     def getNormal(self, point):
@@ -21,5 +21,10 @@ class Sphere(Object):
         if delta < 0:
             return None
         
-        return (-b+math.sqrt(delta))/a
+        ti = (-b+math.sqrt(delta))/a
+
+        if ti <= 0:
+            return None
+        
+        return ti
     

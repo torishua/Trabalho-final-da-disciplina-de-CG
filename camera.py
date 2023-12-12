@@ -15,6 +15,18 @@ class Camera:
         self.ymin = ymin
         self.ymax = ymax
 
+    def getYmax(self):
+        return self.ymax
+    
+    def getXmax(self):
+        return self.xmax
+    
+    def getYmin(self):
+        return self.ymin
+    
+    def getXmin(self):
+        return self.xmin
+
     def getEyePoint(self):
         return self.eyePoint
     
@@ -61,6 +73,7 @@ class Camera:
                 i=j
 
         if minTi == None:
+            #pixel.setLight(Light(255*(abs(self.xmin+stepX*(x+1/2))/self.xmax), 0, 255*(abs(self.ymax-stepY*(y+1/2))/self.ymax))
             return
         
         pixel.setObject(objects[i])

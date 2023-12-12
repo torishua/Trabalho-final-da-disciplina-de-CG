@@ -11,7 +11,6 @@ class Cone(Object):
         self.height = height
 
     def getNormal(self, point):
-        # normal para um cone é a direção do ponto para o vértice ?? 
         n = Vector3.subtract(point, self.position).normalize()
         return n
 

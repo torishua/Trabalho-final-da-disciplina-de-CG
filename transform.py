@@ -35,4 +35,10 @@ class Transform:
     def world2Camera(c, q):
         return Quartenion.multiplyByMatrix4D(Matrix4D.world2Camera(c), q)
     
+    def pontualShadowProjectionY(point, q):
+        return Quartenion.multiplyByMatrix4D(Matrix4D.pontualShadowProjectionY(point), q)
+    
+    def directionalShadowProjectionY(vector3, q):
+        return Quartenion.multiplyByMatrix4D(Matrix4D.directionalShadowProjectionY(vector3), q)
+    
 
